@@ -1,17 +1,25 @@
 #ifndef NO_SSE_H
 #define NO_SSE_H
 
+struct parameters
+{
+    float width;
+    float height;
+
+    float xstart;
+    float ystart;
+};
+
+
 int mandelbrot();
 
-int CountColor(__m128 x, __m128 y, BYTE* colors);
+int CountColor(__m128 x, __m128 y, parameters* params, BYTE* colors);
+
+int PrintFPS();
 
 bool IsZero(__m128 arr);
 
-struct point
-{
-    float x;
-    float y;
-};
+int SetInitialParams(parameters* params);
 
 enum Errors
 {

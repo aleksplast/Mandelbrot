@@ -1,6 +1,6 @@
 CC := g++ -O2 -mavx2 -Wno-pointer-arith -Wwrite-strings
 SRCSSE := main.cpp SSE.cpp
-SRCNOSSE := main.cpp SSE.cpp
+SRCNOSSE := main.cpp No-SSE.cpp
 DIR := C:\Users\USER\Documents\Mandelbrot
 
 .PHONY: all clean

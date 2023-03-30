@@ -1,59 +1,75 @@
 #include <stdio.h>
 #include <xmmintrin.h>
 #include "TXLib.h"
-
-#define BYTE unsigned char
-
 #include "SSE.h"
 
 int SIZEX = 800;
 int SIZEY = 800;
+
+#define BYTE unsigned char
+#define XSHIFT (params.width / (float) SIZEX)
+#define YSHIFT (params.height / (float) SIZEY)
+
 float RMAX = 10 * 10;
 int NMAX = 255;
 
-float XSHIFT = 4/((float) SIZEX);
-float YSHIFT = 4/((float) SIZEY);
-
 int mandelbrot()
 {
+    parameters params = {};
+    SetInitialParams(&params);
+
     __m128 _0123 = {0, 1, 2, 3};
-    __m128 dx = {XSHIFT, XSHIFT, XSHIFT, XSHIFT};
-    dx = _mm_mul_ps(dx, _0123);
     BYTE* colors = (BYTE*) calloc(4, sizeof(BYTE));
 
     txCreateWindow(SIZEX, SIZEY);
     RGBQUAD* mem = txVideoMemory();
     for (;;)
     {
-        for (;;)
+        if (txGetAsyncKeyState(VK_ESCAPE))
+            return 0;
+        if (txGetAsyncKeyState(VK_RIGHT))
+            params.xstart += params.width/20;
+        if (txGetAsyncKeyState(VK_LEFT))
+            params.xstart -= params.width/20;
+        if (txGetAsyncKeyState(VK_UP))
+            params.ystart -= params.height/20;
+        if (txGetAsyncKeyState(VK_DOWN))
+            params.ystart += params.height/20;
+        if (txGetAsyncKeyState('A'))
         {
-            if (txGetAsyncKeyState(VK_ESCAPE))
-                return 0;
+            params.width /= 2;
+            params.height /= 2;
+        }
+        if (txGetAsyncKeyState('Z'))
+        {
+            params.width *= 2;
+            params.height *= 2;
+        }
 
-            printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\bFPS = %.2lg", txGetFPS());
-            for (int i = 0; i < SIZEY; i++)
+        __m128 dx = {XSHIFT, XSHIFT, XSHIFT, XSHIFT};
+        dx = _mm_mul_ps(dx, _0123);
+
+        PrintFPS();
+        for (int i = 0; i < SIZEY; i++)
+        {
+            float y0 = (float) i * YSHIFT - params.height/2 + params.ystart;
+            __m128 y = _mm_set1_ps(y0);            //_mm_set1_ps
+
+            for (int j = 0; j < SIZEX; j += 4)
             {
-                float y0 = (float) i * YSHIFT - 2;
-                __m128 y = {y0, y0, y0, y0};
+                float x0 = (float) j * XSHIFT - params.width/2 + params.xstart;
+                __m128 x = _mm_set1_ps(x0);        //_mm_set1_ps
+                x = _mm_add_ps(x, dx);
 
-                for (int j = 0; j < SIZEX; j += 4)
+                CountColor(x , y, &params, colors);
+
+                for (int k = 0; k < 4; k++)
                 {
-                    float x0 = (float) j * XSHIFT - 2;
-                    __m128 x = {x0, x0, x0, x0};
-                    x = _mm_add_ps(x, dx);
-
-                    CountColor(x , y, colors);
-
-                    for (int k = 0; k < 4; k++)
-                    {
-//                        printf("LOADING COLORS\n");
-//                        printf("COLOR = %c\n", (BYTE) colors[k]);
-                        mem[j + k + (SIZEY - 1 - i) * SIZEX] = {(BYTE) colors[k], (BYTE) colors[k], (BYTE) colors[k], 0};
-                    }
+                    mem[j + k + (SIZEY - 1 - i) * SIZEX] = {(BYTE) colors[k], (BYTE) colors[k], (BYTE) colors[k], 0};
                 }
             }
-            txRedrawWindow();
         }
+        txRedrawWindow();
     }
 
     free(colors);
@@ -61,7 +77,7 @@ int mandelbrot()
     return NOERR;
 }
 
-int CountColor(__m128 x, __m128 y, BYTE* colors)
+int CountColor(__m128 x, __m128 y, parameters* params, BYTE* colors)
 {
     __m128 x0 = x;
     __m128 y0 = y;
@@ -69,7 +85,6 @@ int CountColor(__m128 x, __m128 y, BYTE* colors)
     __m128 rad  = {RMAX, RMAX, RMAX, RMAX};
     __m128 colorscnr = {1, 1, 1, 1};
     __m128 twos = {2, 2, 2, 2};
-    __m64 res = {0, 0};
 //    printf("HERE");
 
     for (int n = 0; n < NMAX; n++)
@@ -114,4 +129,25 @@ bool IsZero(__m128 arr)
     }
 
     return true;
+}
+
+int PrintFPS()
+{
+    for (int i = 0; i < 10; i++)
+    {
+        printf("\b");
+    }
+    printf("FPS = %.2lg ", txGetFPS());
+
+    return 0;
+}
+
+int SetInitialParams(parameters* params)
+{
+    params->height = 4;
+    params->width = 4;
+    params->xstart = 0;
+    params->ystart = 0;
+
+    return NOERR;
 }

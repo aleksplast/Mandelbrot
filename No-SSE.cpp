@@ -4,11 +4,11 @@
 
 #define BYTE unsigned char
 
-#include "mandelbrot.h"
+#include "NO-SSE.h"
 
 int SIZEX = 800;
 int SIZEY = 800;
-float RMAX = 10;
+float RMAX = 10 * 10;
 int NMAX = 255;
 
 float XSHIFT = 4/((float) SIZEX);
@@ -20,42 +20,39 @@ int mandelbrot()
     RGBQUAD* mem = txVideoMemory();
     for (;;)
     {
-        for (;;)
+        if (txGetAsyncKeyState(VK_ESCAPE))
+            return 0;
+
+        printf("\b\b\b\b\b\b\b\b\bFPS = %.2lg ", txGetFPS());
+        for (int i = 0; i < SIZEY; i++)
         {
-            if (txGetAsyncKeyState(VK_ESCAPE))
-                return 0;
+            float y0 = (float) i * YSHIFT - 2;
 
-            printf("\b\b\b\b\b\b\b\bFPS = %.2lg", txGetFPS());
-            for (int i = 0; i < SIZEY; i++)
+            for (int j = 0; j < SIZEX; j++)
             {
-                float y0 = (float) i * YSHIFT - 2;
+                float x0 = (float) j * XSHIFT - 2;
+                float x = x0;
+                float y = y0;
+                BYTE n = 0;
 
-                for (int j = 0; j < SIZEX; j++)
+                for (; n < NMAX; n++)
                 {
-                    RGBQUAD pix = {};
-                    float x0 = (float) j * XSHIFT - 2;
-                    float x = x0;
-                    float y = y0;
-                    BYTE n = 0;
+                    float x2 = x * x;
+                    float y2 = y * y;
 
-                    for (; n < NMAX; n++)
+                    if (x2 + y2 > RMAX)
                     {
-                        float x2 = x * x;
-                        float y2 = y * y;
-
-                        if (x2 + y2 > RMAX)
-                            break;
-
-                        x = x * y + x * y + x0;
-                        y = y2 - x2 + y0;
+                        break;
                     }
 
-                    pix.rgbBlue = n;
-                    pix.rgbGreen = n;
-                    pix.rgbRed = n;
-
-                    mem[i + (SIZEY - 1 - j) * SIZEX] = pix;
+                    y = x * y + x * y + y0;
+                    x = x2 - y2 + x0;
                 }
+
+                if (n == 255)
+                    n = 0;
+
+                mem[j + (SIZEY - 1 - i) * SIZEX] = {n, n, n, 0};
             }
         }
         txRedrawWindow();
