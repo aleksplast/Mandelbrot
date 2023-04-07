@@ -13,11 +13,13 @@ struct parameters
 
 int mandelbrot();
 
-int CountColor(__m128 x, __m128 y, parameters* params, BYTE* colors);
+int CountColor(__m256 x, __m256 y, BYTE* colors);
 
-int PrintFPS();
+int Hotkeys(parameters* params);
 
-bool IsZero(__m128 arr);
+int PrintFPS(int* counter);
+
+bool IsZero(__m256 arr);
 
 int SetInitialParams(parameters* params);
 

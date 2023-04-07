@@ -18,45 +18,45 @@ int mandelbrot()
 {
     txCreateWindow(SIZEX, SIZEY);
     RGBQUAD* mem = txVideoMemory();
-    for (;;)
-    {
-        if (txGetAsyncKeyState(VK_ESCAPE))
-            return 0;
-
-        printf("\b\b\b\b\b\b\b\b\bFPS = %.2lg ", txGetFPS());
-        for (int i = 0; i < SIZEY; i++)
+        for (;;)
         {
-            float y0 = (float) i * YSHIFT - 2;
+            if (txGetAsyncKeyState(VK_ESCAPE))
+                return 0;
 
-            for (int j = 0; j < SIZEX; j++)
+            printf("\b\b\b\b\b\b\b\b\bFPS = %.2lg", txGetFPS());
+            for (int i = 0; i < SIZEY; i++)
             {
-                float x0 = (float) j * XSHIFT - 2;
-                float x = x0;
-                float y = y0;
-                BYTE n = 0;
+                float y0 = (float) i * YSHIFT - 2;
 
-                for (; n < NMAX; n++)
+                for (int j = 0; j < SIZEX; j++)
                 {
-                    float x2 = x * x;
-                    float y2 = y * y;
+                    float x0 = (float) j * XSHIFT - 2;
+                    float x = x0;
+                    float y = y0;
+                    BYTE n = 0;
 
-                    if (x2 + y2 > RMAX)
-                    {
-                        break;
-                    }
+                        for (; n < NMAX; n++)
+                        {
+                            float x2 = x * x;
+                            float y2 = y * y;
 
-                    y = x * y + x * y + y0;
-                    x = x2 - y2 + x0;
+                            if (x2 + y2 > RMAX)
+                            {
+                                break;
+                            }
+
+                            y = x * y + x * y + y0;
+                            x = x2 - y2 + x0;
+                        }
+
+                    if (n == 255)
+                        n = 0;
+
+                    mem[j + (SIZEY - 1 - i) * SIZEX] = {n, n, n, 0};
                 }
-
-                if (n == 255)
-                    n = 0;
-
-                mem[j + (SIZEY - 1 - i) * SIZEX] = {n, n, n, 0};
             }
+            txRedrawWindow();
         }
-        txRedrawWindow();
-    }
 
     return NOERR;
 }
