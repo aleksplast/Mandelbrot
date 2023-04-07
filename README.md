@@ -134,7 +134,7 @@ Lets take two pictures in RGBA format, where RGB stands for Red, Green and Blue 
 
 $ColorNew_{red} = ColorBack_{red} * \alpha + ColorFront_{red} * (\alpha - 1)$
 
-For example, we will use two pictures: ping pong table and the very cute Aschat cat. The result must be as follow:
+For example, we will use two pictures: ping pong table and the very cute Aschat cat. The result must be as follows:
 
  </br>
  </br>
