@@ -215,6 +215,8 @@ Results:
 
 Speed growth is not as high as we want , but what if we switch off graphical part and concetrate only on calculation algorithm?
 
+| Version      | Compilation flags | FPS           | Speed growth  |
+| ------      | :---------------: | :------------: | :----------: |
 | No SSE      | none              | 153            |   0.13        |
 | No SSE      | -О3               | 1200             |   0.95        |
 | No SSE      | -Оfast            | 1260          |   1          |
