@@ -2,7 +2,6 @@
 #include "TXLib.h"
 #include "No-SSE.h"
 #include "SSE.h"
-#include "alphablending.h"
 
 int sizex = 800;
 int sizey = 800;

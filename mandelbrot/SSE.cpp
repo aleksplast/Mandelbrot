@@ -50,11 +50,11 @@ int mandelbrot()
 
                 for (int k = 0; k < 8; k++)
                 {
-                    mem[j + k + (SIZEY - 1 - i) * SIZEX] = {(BYTE) colors[k], (BYTE) colors[k], (BYTE) colors[k], 0};
+                    mem[j + k + (SIZEY - 1 - i) * SIZEX] = {(BYTE) (colors[k] * 2), (BYTE) colors[k], (BYTE) (colors[k] * 2), 0};
                 }
             }
         }
-        txRedrawWindow();
+//        txRedrawWindow();
     }
 
     free(colors);

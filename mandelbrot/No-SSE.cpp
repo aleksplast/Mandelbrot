@@ -52,7 +52,7 @@ int mandelbrot()
                     if (n == 255)
                         n = 0;
 
-                    mem[j + (SIZEY - 1 - i) * SIZEX] = {n, n, n, 0};
+                    mem[j + (SIZEY - 1 - i) * SIZEX] = {n * 2, n, n * 2, 0};
                 }
             }
             txRedrawWindow();

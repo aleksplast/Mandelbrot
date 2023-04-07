@@ -1,11 +1,11 @@
 #include <stdio.h>
-#include <xmmintrin.h>
+#include <immintrin.h>
 #include "TXLib.h"
 #include "alphablending.h"
 
 int SIZEX = 800;
 int SIZEY = 800;
-#define INDEX (i * SIZEX + j)
+#define INDEX (y * SIZEX + x)
 
 #pragma GCC diagnostic ignored "-Wconversion"
 
@@ -14,28 +14,26 @@ int alphablendNOSSE(RGBQUAD* back, RGBQUAD* front)
     txCreateWindow(SIZEX, SIZEY);
     RGBQUAD* mem = txVideoMemory();
     int counter = 0;
-    printf("HERE\n");
 
     for (;;)
     {
         if (txGetAsyncKeyState(VK_ESCAPE))
             return 1;
 
-        PrintFPS(&counter);
-        for (int i = 0; i < SIZEY; i++)
+        for (int y = 0; y < SIZEY; y++)
         {
-            for (int j = 0; j < SIZEX; j++)
+            for (int x = 0; x < SIZEX; x++)
             {
-    //            printf("BACK BLUE = %d", back[INDEX].rgbBlue);
                 mem[INDEX].rgbBlue = (front[INDEX].rgbBlue * front[INDEX].rgbReserved + back[INDEX].rgbBlue * (255 - front[INDEX].rgbReserved)) >> 8;
                 mem[INDEX].rgbRed = (front[INDEX].rgbRed * front[INDEX].rgbReserved + back[INDEX].rgbRed * (255 -  front[INDEX].rgbReserved)) >> 8;
                 mem[INDEX].rgbGreen = (front[INDEX].rgbGreen * front[INDEX].rgbReserved + back[INDEX].rgbGreen * (255 - front[INDEX].rgbReserved)) >> 8;
             }
         }
         txRedrawWindow();
+        PrintFPS(&counter);
+
     }
 
-//    txBitBlt(txDC(), 0, 0, SIZEX, SIZEY, back);
     return NOERR;
 }
 
@@ -47,20 +45,17 @@ int alphablendSSE(RGBQUAD* back, RGBQUAD* front)
 
     __m128i zeros = _mm_set1_epi8(0);
 
-    printf("SSE\n\n\n");
     for (;;)
     {
         if (txGetAsyncKeyState(VK_ESCAPE))
             return 1;
 
-        PrintFPS(&counter);
         for (int y = 0; y < SIZEY; y++)
         {
             for (int x = 0; x < SIZEX; x += 4)
             {
-    //            printf("BACK BLUE = %d", back[INDEX].rgbBlue);
-                __m128i frontL  = _mm_loadu_si128((__m128i*)(front + y * SIZEX+ x));
-                __m128i backL   = _mm_loadu_si128((__m128i*)(back + y * SIZEX + x));
+                __m128i frontL  = _mm_loadu_si128((__m128i*)(front + INDEX));
+                __m128i backL   = _mm_loadu_si128((__m128i*)(back + INDEX));
 
                 __m128i frontH  = (__m128i) (_mm_movehl_ps((__m128)zeros, (__m128)frontL));
                 __m128i backH   = (__m128i) (_mm_movehl_ps((__m128)zeros, (__m128)backL));
@@ -70,7 +65,8 @@ int alphablendSSE(RGBQUAD* back, RGBQUAD* front)
                 frontH  = _mm_cvtepi8_epi16(frontH);
                 backH   = _mm_cvtepi8_epi16(backH);
 
-                __m128i mask            = _mm_set_epi8(0x80, 14, 0x80, 14, 0x80, 14, 0x80, 14, 0x80, 6, 0x80, 6, 0x80, 6, 0x80, 6);
+                __m128i mask            = _mm_set_epi8(0x80, 14, 0x80, 14, 0x80, 14, 0x80, 14,
+                                                       0x80,  6, 0x80,  6, 0x80,  6, 0x80,  6);
                 __m128i transparencyL   = _mm_shuffle_epi8(frontL, mask);
                 __m128i transparencyH   = _mm_shuffle_epi8(frontH, mask);
 
@@ -82,19 +78,21 @@ int alphablendSSE(RGBQUAD* back, RGBQUAD* front)
                 __m128i sumL = _mm_add_epi16(frontL, backL);
                 __m128i sumH = _mm_add_epi16(frontH, backH);
 
-                mask = _mm_set_epi8(0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 15, 13, 11, 9, 7, 5, 3, 1);
+                mask = _mm_set_epi8(0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+                                      15,   13,   11,    9,    7,    5,    3,    1);
                 sumL = _mm_shuffle_epi8(sumL, mask);
                 sumH = _mm_shuffle_epi8(sumH, mask);
 
-                __m128i res = (__m128i) (_mm_movelh_ps((__m128)sumL, (__m128)sumH));
+                __m128i result = (__m128i) (_mm_movelh_ps((__m128)sumL, (__m128)sumH));
 
-                _mm_storeu_si128((__m128i*)(mem + y * SIZEX + x), res);
+                _mm_storeu_si128((__m128i*)(mem + INDEX), result);
             }
         }
+
+        PrintFPS(&counter);
         txRedrawWindow();
     }
 
-//    txBitBlt(txDC(), 0, 0, SIZEX, SIZEY, back);
     return NOERR;
 }
 
@@ -117,7 +115,7 @@ HDC LoadImg(char name[], int x, int y, RGBQUAD** pixels)
 
 int PrintFPS(int* counter)
 {
-    if (*counter < 1000)
+    if (*counter < 100)
     {
         (*counter)++;
     }
@@ -127,7 +125,7 @@ int PrintFPS(int* counter)
         {
             printf("\b");
         }
-        printf("FPS = %.5lg", txGetFPS() * 1000);
+        printf("FPS = %.5lg", txGetFPS() * 100);
         *counter = 0;
     }
 

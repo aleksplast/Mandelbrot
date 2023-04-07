@@ -1,8 +1,9 @@
-CC := g++ -O2 -mavx2 -Wno-pointer-arith -Wwrite-strings
-FAST := g++ -Ofast -mavx2 -Wno-pointer-arith -Wwrite-strings
-SRCSSE := main.cpp SSE.cpp
-SRCNOSSE := main.cpp No-SSE.cpp
-SRCALPHA := alphamain.cpp alphablending.cpp
+CC := g++ -mavx2 -Wno-pointer-arith -Wwrite-strings
+O3 := g++ -O3 -mavx2 -Wno-pointer-arith -Wwrite-strings
+FAST := g++ -mavx2 -Ofast -Wno-pointer-arith -Wwrite-strings
+SRCSSE := mandelbrot\main.cpp mandelbrot\SSE.cpp
+SRCNOSSE := mandelbrot\main.cpp mandelbrot\No-SSE.cpp
+SRCALPHA := alphablending\alphamain.cpp alphablending\alphablending.cpp
 DIR := C:\Users\USER\Documents\Mandelbrot
 
 .PHONY: all clean
@@ -25,8 +26,13 @@ SSEf: $(SRCSSE)
 alpha: $(SRCALPHA)
 	$(CC) $^ -o $(DIR)\$@
 
+alpha3: $(SRCALPHA)
+	$(O3) $^ -o $(DIR)\$@
+
 alphaf: $(SRCALPHA)
 	$(FAST) $^ -o $(DIR)\$@
+
+alphaall: alpha alpha3 alphaf
 
 clean:
 	rm -rf *.png *.dot
