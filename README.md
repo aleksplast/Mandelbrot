@@ -81,8 +81,6 @@ From this table we can see, that optimization flags make difference, but we will
 
 ## Implemeting AVX commands
 
-You can read about AVX commands and how they work here: https://www.laruence.com/sse/.
-
 In our programm with them goes like this.
 
 
