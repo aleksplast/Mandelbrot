@@ -81,7 +81,7 @@ From this table we can see, that optimization flags make difference, but we will
 
 ## Implemeting AVX commands
 
-In our programm with them goes like this.
+Our programm with them goes like this.
 
 
 ~~~C++
