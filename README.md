@@ -69,7 +69,7 @@ for (int i = 0; i < SIZEY; i++)
 }
 ~~~
 
-Lets try to optimize our programm with optimization flags, like -O3, -Ofast. The output FPS is shown in the table below. We will take standart speed as a speed of our programm without AVX, but with -Ofast flag.
+Lets try to optimize our programm with optimization flags, like -O3, -Ofast. The output FPS is shown in the table below. In this project, we will take standard speed as a speed of our programm without SIMD inctructions, but with -Ofast flag.
 
 | Version      | Compilation flags | FPS           | Speed growth  |
 | ------      | :---------------: | :------------: | :----------: |
