@@ -85,25 +85,31 @@ Our programm with them goes like this.
 
 
 ~~~C++
-__m256 x2 = _mm256_mul_ps(x, x);
-__m256 y2 = _mm256_mul_ps(y, y);
+__m256 x0 = x;
+__m256 y0 = y;
+__m256 mask = _mm256_set1_ps(1);
+__m256 rad  = _mm256_set1_ps(RMAX);
+*colors = _mm256_set1_ps(1);
+__m256 twos = _mm256_set1_ps(2);
 
-__m256 dist = _mm256_add_ps(x2, y2);
-__m256 Rcmp = _mm256_cmp_ps(rad, dist, _CMP_GT_OQ);
-mask = _mm256_and_ps(Rcmp, mask);
-colorscnr = _mm256_add_ps(colorscnr, mask);
-
-if (IsZero(mask))
+for (int n = 0; n < NMAX; n++)
 {
-    for (int i = 0; i < 8; i++)
-    {
-        colors[i] = (BYTE) colorscnr[i];
-    }
-    return 0;
-}
+    __m256 x2 = _mm256_mul_ps(x, x);
+    __m256 y2 = _mm256_mul_ps(y, y);
 
-y = _mm256_mul_ps(_mm256_add_ps(_mm256_mul_ps(_mm256_mul_ps(x, y), twos), y0), mask);
-x = _mm256_mul_ps(_mm256_add_ps(_mm256_sub_ps(x2, y2), x0), mask);
+    __m256 dist = _mm256_add_ps(x2, y2);
+    __m256 Rcmp = _mm256_cmp_ps(rad, dist, _CMP_GT_OQ);
+    mask = _mm256_and_ps(Rcmp, mask);
+    *colors = _mm256_add_ps(*colors, mask);
+
+    if (IsZero(mask))
+    {
+        return 0;
+    }
+
+    y = _mm256_mul_ps(_mm256_add_ps(_mm256_mul_ps(_mm256_mul_ps(x, y), twos), y0), mask);
+    x = _mm256_mul_ps(_mm256_add_ps(_mm256_sub_ps(x2, y2), x0), mask);
+}
 
 ~~~
 
