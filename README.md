@@ -244,3 +244,5 @@ As we can see, programm runs faster, so SIMD instructions is doing their job.
 ## Conclusion
 
 SIMD instructions is useful for alpha blending, just as for drawing Mandelbrot fractal. 
+
+你好中国。 我会说汉语。
