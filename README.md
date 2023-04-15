@@ -1,19 +1,17 @@
 # SIMD instructions
 ## Overview
 
-The goal of this project is implementing SIMD instructions for optimizing calculation speed of our programm.
+The goal of this project is optimizing calculation speed of our programm using SIMD instructions.
 
 Project is split in two parts: Mandlebrot fractal and alpha blending. Each one shows, how SIMD instructions can maximize perfomance of our programm.
 
 # A little bit of theory about SIMD instructions
 
-SIMD (Single Instruction, Multiple Data) is a technique that allows a single instruction to be executed on multiple pieces of data at the same time to improve performance. SSE (Advanced Vector Extensions) is a specific implementation of SIMD that allows for 128-bit vectors to be processed at once.
+SIMD (Single Instruction, Multiple Data) is a technique that allows a single instruction to be executed on multiple pieces of data at the same time to improve performance. For example, SSE is a specific implementation of SIMD that allows 128-bit vectors to be processed at once. 
 
-While compiler optimization flags such as -Ofast and -O3 can improve program performance, they may not always be able to take advantage of specific hardware features like SIMD. In contrast, using SIMD SSE instructions allows for more precise control over how data is processed, resulting in potentially greater performance gains.
+Compiler optimization flags, like -Ofast and -O3 surely can improve programm perfomance, but they usually don't use SIMD instructions, we will see it later. Using SIMD instructions allows more precise control over how data is processed, resulting in potentially greater performance.
 
-Additionally, compiler flags can sometimes result in unintended consequences, such as changes to program behavior or increased memory usage. By using explicit SIMD instructions, we can ensure that our program behaves exactly as intended.
-
-For example, SIMD instructions include Intel SSE and AVX instructions, in this project we will use both of them.
+Using of SIMD instructions results in bigger amount of code, but the results worth it. 
 
 
 # Chapter I: Mandelbrot fractal
