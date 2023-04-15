@@ -116,8 +116,8 @@ The output FPS with AVX instructions is shown in the table below. Just as in the
 | Version      | Compilation flags | FPS           | Speed growth  |
 | ------      | :---------------: | :------------: | :----------: |
 | AVX         | none              | 21             |   1.56      |
-| AVX         | -О3               | 50             |   2.94       |
-| AVX         | -Ofast            | 50             |   2.94     |
+| AVX         | -О3               | 56             |   3.29       |
+| AVX         | -Ofast            | 56             |   3.29     |
 
 In addition, we can switch off graphical part of out programm and the resulting FPS will be around 80. Speed growth in this example will be 4.7 . 
 
