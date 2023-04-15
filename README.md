@@ -77,7 +77,7 @@ Lets try to optimize our programm with optimization flags, like -O3, -Ofast. The
 
 From this table we can see, that optimization flags make difference, but we will try to beat them in optimization battle, for this we will need help of AVX commands.
 
-## Implemeting AVX commands
+## Implemeting AVX instructions
 
 Our programm with them goes like this.
 
@@ -111,7 +111,7 @@ for (int n = 0; n < NMAX; n++)
 
 ~~~
 
-The output FPS with AVX commands is shown in the table below. Just as in the first step we will try various optimization flag in addition to AVX commands.
+The output FPS with AVX instructions is shown in the table below. Just as in the first step we will try various optimization flag in addition to AVX commands.
 
 | Version      | Compilation flags | FPS           | Speed growth  |
 | ------      | :---------------: | :------------: | :----------: |
@@ -123,7 +123,7 @@ In addition, we can switch off graphical part of out programm and the resulting 
 
 ## Conclusion
 
-AVX commands is doing their job in accelerating our code, with them it goes around 3 times faster, then without them. 
+AVX instructions is doing their job in accelerating our code, with them it goes around 3 times faster, then without them. 
 
 Graphical part is still a big issue, without it programm runs even faster. Optimization flags also doing their impact, but not as big as AVX.
 
