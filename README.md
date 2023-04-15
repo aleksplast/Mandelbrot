@@ -171,7 +171,7 @@ Again, lets try various optimization flags, FPS for each case is shown in the ta
 | No SSE      | -О3               | 126             |   1        |
 | No SSE      | -Оfast            | 126          |   1          |
 
-But this is not the best what we can can, lets implement SIMD instructions.
+But this is not the best what we can get, lets implement SIMD instructions.
 
 ## Implementing SIMD instructions
 
